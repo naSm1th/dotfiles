@@ -16,6 +16,9 @@
   };
 
   networking.hostName = "pussinboots";
+  
+  # Use latest kernel.
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   time.timeZone = "America/Chicago";
   i18n = {
@@ -37,11 +40,24 @@
 
   environment.systemPackages = with pkgs; [
     vim
+    git
+    smartmontools
+    e2fsprogs
   #  wget
   ];
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+
+  # Enable smartd to monitor the spinning disk.
+  services.smartd = {
+    enable = true;
+    devices = [
+      {
+        device = "/dev/disk/by-id/ata-ST5000LM000-2U8170_WCJ6ZE69";
+      }
+    ];
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
