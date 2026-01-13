@@ -43,7 +43,7 @@
     git
     smartmontools
     e2fsprogs
-  #  wget
+    
   ];
 
   # Enable the OpenSSH daemon.
@@ -57,6 +57,41 @@
         device = "/dev/disk/by-id/ata-ST5000LM000-2U8170_WCJ6ZE69";
       }
     ];
+  };
+
+  services.plex = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  services.overseerr = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  services.tautulli = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  services.sonarr = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  services.radarr = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  services.prowlarr = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  services.bazarr = {
+    enable = true;
+    openFirewall = true;
   };
 
   # Open ports in the firewall.
