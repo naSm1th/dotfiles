@@ -38,12 +38,24 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  users = {
+    groups.media = {
+      gid = 9001;
+    };
+    users.media = {
+      isSystemUser = true;
+      createHome = false;
+      uid = 9001;
+      group = "media";
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     vim
     git
     smartmontools
     e2fsprogs
-    
+    wireguard-tools
   ];
 
   # Enable the OpenSSH daemon.
@@ -66,45 +78,45 @@
 
   # creating network namespace
   systemd.services."netns@" = {
-   description = "%I network namespace";
-   before = [ "network.target" ];
-   serviceConfig = {
-     Type = "oneshot";
-     RemainAfterExit = true;
-     ExecStart = "${pkgs.iproute2}/bin/ip netns add %I";
-     ExecStop = "${pkgs.iproute2}/bin/ip netns del %I";
-   };
+    description = "%I network namespace";
+    before = [ "network.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.iproute2}/bin/ip netns add %I";
+      ExecStop = "${pkgs.iproute2}/bin/ip netns del %I";
+    };
   };
 
   # set proper DNS for VPN
-  environment.etc."netns/wg/resolv.conf".text = "nameserver 10.2.0.1";
+  # environment.etc."netns/wg/resolv.conf".text = "nameserver 10.2.0.1";
 
   # setting up wireguard interface within network namespace
   systemd.services.wg = {
-   description = "wg network interface";
-   bindsTo = [ "netns@wg.service" ];
-   requires = [ "network-online.target" ];
-   after = [ "netns@wg.service" ];
-   serviceConfig = {
-     Type = "oneshot";
-     RemainAfterExit = true;
-     ExecStart = with pkgs; writers.writeBash "wg-up" ''
-       set -e
-       ${iproute2}/bin/ip link add wg0 type wireguard
-       ${iproute2}/bin/ip link set wg0 netns wg
-       ${iproute2}/bin/ip -n wg address add 10.2.0.2 dev wg0
-       ${iproute2}/bin/ip netns exec wg \
-         ${wireguard-tools}/bin/wg setconf wg0 /root/vpn_config.conf
-       ${iproute2}/bin/ip -n wg link set wg0 up
-       # need to set lo up as network namespace is started with lo down
-       ${iproute2}/bin/ip -n wg link set lo up
-       ${iproute2}/bin/ip -n wg route add default dev wg0
-     '';
-     ExecStop = with pkgs; writers.writeBash "wg-down" ''
-       ${iproute2}/bin/ip -n wg route del default dev wg0
-       ${iproute2}/bin/ip -n wg link del wg0
-     '';
-   };
+    description = "wg network interface";
+    bindsTo = [ "netns@wg.service" ];
+    requires = [ "network-online.target" ];
+    after = [ "netns@wg.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = with pkgs; writers.writeBash "wg-up" ''
+        set -e
+        ${iproute2}/bin/ip link add wg0 type wireguard
+        ${iproute2}/bin/ip link set wg0 netns wg
+        ${iproute2}/bin/ip -n wg address add 10.2.0.2 dev wg0
+        ${iproute2}/bin/ip netns exec wg \
+          ${wireguard-tools}/bin/wg setconf wg0 /etc/nixos/wireguard/wg0.conf
+        ${iproute2}/bin/ip -n wg link set wg0 up
+        # need to set lo up as network namespace is started with lo down
+        ${iproute2}/bin/ip -n wg link set lo up
+        # ${iproute2}/bin/ip -n wg route add default dev wg0
+      '';
+      ExecStop = with pkgs; writers.writeBash "wg-down" ''
+        ${iproute2}/bin/ip -n wg route del default dev wg0
+        ${iproute2}/bin/ip -n wg link del wg0
+      '';
+    };
   };
 
   # binding deluged to network namespace
@@ -129,7 +141,7 @@
    unitConfig = { JoinsNamespaceOf = "deluged.service"; };
    serviceConfig = {
      User = "deluge";
-     Group = "deluge";
+     Group = "media";
      ExecStart = "${pkgs.systemd}/lib/systemd/systemd-socket-proxyd --exit-idle-time=5min 127.0.0.1:58846";
      PrivateNetwork = "yes";
    };
@@ -138,6 +150,7 @@
   services.plex = {
     enable = true;
     openFirewall = true;
+    group = "media";
   };
 
   services.overseerr = {
@@ -148,16 +161,22 @@
   services.tautulli = {
     enable = true;
     openFirewall = true;
+    user = "media";
+    group = "media";
   };
 
   services.sonarr = {
     enable = true;
     openFirewall = true;
+    user = "media";
+    group = "media";
   };
 
   services.radarr = {
     enable = true;
     openFirewall = true;
+    user = "media";
+    group = "media";
   };
 
   services.prowlarr = {
@@ -168,6 +187,7 @@
   services.bazarr = {
     enable = true;
     openFirewall = true;
+    group = "media";
   };
 
   # Open ports in the firewall.
