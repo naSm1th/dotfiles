@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
@@ -38,16 +38,11 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  users = {
-    groups.media = {
-      gid = 9001;
-    };
-    users.media = {
-      isSystemUser = true;
-      createHome = false;
-      uid = 9001;
-      group = "media";
-    };
+  users.groups.media = { };
+  users.users.media = {
+    isNormalUser = true;
+    createHome = false;
+    group = "media";
   };
 
   environment.systemPackages = with pkgs; [
