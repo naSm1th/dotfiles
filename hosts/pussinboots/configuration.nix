@@ -43,6 +43,7 @@
     isNormalUser = true;
     createHome = false;
     group = "media";
+    extraGroups = [ "networkmanager" ];
   };
 
   environment.systemPackages = with pkgs; [
@@ -156,21 +157,17 @@
   services.tautulli = {
     enable = true;
     openFirewall = true;
-    user = "media";
-    group = "media";
   };
 
   services.sonarr = {
     enable = true;
     openFirewall = true;
-    user = "media";
     group = "media";
   };
 
   services.radarr = {
     enable = true;
     openFirewall = true;
-    user = "media";
     group = "media";
   };
 
