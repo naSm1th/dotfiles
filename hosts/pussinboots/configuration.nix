@@ -54,6 +54,8 @@
     wireguard-tools
     pciutils
     usbutils
+    dvb-apps
+    w_scan2
   ];
 
   # Enable the OpenSSH daemon.
