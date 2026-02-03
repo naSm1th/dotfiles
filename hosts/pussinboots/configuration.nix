@@ -52,6 +52,8 @@
     smartmontools
     e2fsprogs
     wireguard-tools
+    pciutils
+    usbutils
   ];
 
   # Enable the OpenSSH daemon.
@@ -70,6 +72,7 @@
   services.deluge = {
     enable = true;
     web.enable = true;
+    group = "media";
   };
 
   # creating network namespace
@@ -100,13 +103,13 @@
         set -e
         ${iproute2}/bin/ip link add wg0 type wireguard
         ${iproute2}/bin/ip link set wg0 netns wg
-        ${iproute2}/bin/ip -n wg address add 10.2.0.2 dev wg0
+        ${iproute2}/bin/ip -n wg address add 10.2.0.2/32 dev wg0
         ${iproute2}/bin/ip netns exec wg \
           ${wireguard-tools}/bin/wg setconf wg0 /etc/nixos/wireguard/wg0.conf
         ${iproute2}/bin/ip -n wg link set wg0 up
         # need to set lo up as network namespace is started with lo down
         ${iproute2}/bin/ip -n wg link set lo up
-        # ${iproute2}/bin/ip -n wg route add default dev wg0
+        ${iproute2}/bin/ip -n wg route add default dev wg0
       '';
       ExecStop = with pkgs; writers.writeBash "wg-down" ''
         ${iproute2}/bin/ip -n wg route del default dev wg0
