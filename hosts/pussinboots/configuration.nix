@@ -59,6 +59,13 @@
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  # Permit all users to access TV tuner
+  services.udev.extraRules = ''
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="2040", MODE="0666"
+    SUBSYSTEM=="video4linux", ATTRS{idVendor}=="2040", MODE="0666"
+    SUBSYSTEM=="dvb", ATTRS{idVendor}=="2040", MODE="0666"
+  '';
+
   # Enable smartd to monitor the spinning disk.
   services.smartd = {
     enable = true;
