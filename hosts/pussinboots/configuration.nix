@@ -56,6 +56,7 @@
     usbutils
     dvb-apps
     w_scan2
+    v4l-utils
   ];
 
   # Enable the OpenSSH daemon.
