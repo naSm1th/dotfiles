@@ -2,15 +2,23 @@
   description = "System state configured by Nix flakes";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs = {
+      url = "github:nixos/nixpkgs/nixos-25.11";
+    };
+    agenix = {
+      url = "github:yaxitech/ragenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, ... } @ inputs:
+  outputs = { nixpkgs, agenix, ... } @ inputs:
   let
     shared = [
       ./modules/users/nsmith.nix
       ./modules/network
+      ./modules/agenix
 #      ./modules/homer
+      agenix.nixosModules.default
     ];
     media = [
 #      ./modules/vpn

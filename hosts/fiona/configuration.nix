@@ -33,18 +33,79 @@
     };
   };
 
+  hardware.bluetooth.enable = true;
+
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
     vim
+    git
+    ragenix
   #  wget
   ];
+
+  # Caddy reverse proxy (with ACME DNS integration with Cloudflare)
+  services.caddy = {
+    enable = true;
+    package = pkgs.caddy.withPlugins {
+      plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
+      hash = "sha256-i7OoxiHJ4Stfp7SnxOryLAXS6w5+PJCnEydOakhFYcE=";
+    };
+    virtualHosts."ha.nasmith.me".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+      reverse_proxy localhost:8123 {
+        header_down X-Real-IP {http.request.remote}
+        header_down X-Forwarded-For {http.request.remote}
+        websocket
+        transparent
+      }
+    '';
+  };
+  systemd.services.caddy.serviceConfig.EnvironmentFile = config.age.secrets.cloudflare.path;
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  virtualisation = {
+    containers.enable = true;
+    podman = {
+      enable = true;
+      dockerCompat = true;
+      defaultNetwork.settings.dns_enabled = true; # Required for containers under podman-compose to be able to talk to each other.
+    };
+    oci-containers = {
+      backend = "podman";
+      containers.homeassistant = {
+        volumes = [
+          "/var/lib/homeassistant:/config"
+          "/run/dbus:/run/dbus:ro"
+        ];
+        environment.TZ = "America/Chicago";
+        # Note: The image will not be updated on rebuilds, unless the version label changes
+        image = "ghcr.io/home-assistant/home-assistant:2026.4.1";
+        extraOptions = [ 
+          # Use the host network namespace for all sockets
+          "--network=host"
+          # Permit bluetooth
+          "--cap-add=NET_ADMIN"
+          "--cap-add=NET_RAW"
+          # Pass devices into the container, so Home Assistant can discover and make use of them
+          # "--device=/dev/ttyACM0:/dev/ttyACM0"
+        ];
+      };
+    };
+  };
+
+  users.users.nsmith = {
+    extraGroups = [
+      "podman"
+    ];
+  };
+
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
 
   # Enable flakes support
