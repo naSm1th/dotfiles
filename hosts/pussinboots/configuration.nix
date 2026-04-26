@@ -57,6 +57,7 @@
     dvb-apps
     w_scan2
     v4l-utils
+    ragenix
   ];
 
   # Enable the OpenSSH daemon.
@@ -115,7 +116,7 @@
         ${iproute2}/bin/ip link set wg0 netns wg
         ${iproute2}/bin/ip -n wg address add 10.2.0.2/32 dev wg0
         ${iproute2}/bin/ip netns exec wg \
-          ${wireguard-tools}/bin/wg setconf wg0 /etc/nixos/wireguard/wg0.conf
+          ${wireguard-tools}/bin/wg setconf wg0 ${config.age.secrets.wireguardCredentials.path}
         ${iproute2}/bin/ip -n wg link set wg0 up
         # need to set lo up as network namespace is started with lo down
         ${iproute2}/bin/ip -n wg link set lo up
@@ -127,6 +128,8 @@
       '';
     };
   };
+
+  environment.etc."netns/wg/resolv.conf".text = "nameserver 10.2.0.1";
 
   # binding deluged to network namespace
   systemd.services.deluged.bindsTo = [ "netns@wg.service" ];
