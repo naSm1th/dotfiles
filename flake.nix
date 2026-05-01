@@ -75,6 +75,13 @@
           ./hosts/shrek/configuration.nix
         ];
       };
+
+      laptoppy = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = shared ++ [
+          ./hosts/laptoppy/configuration.nix
+        ];
+      };
     };
   };
 }
