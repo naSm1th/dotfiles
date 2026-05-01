@@ -163,6 +163,91 @@
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
+
+    configure = {
+      customRC = ''
+        " here your custom VimScript configuration goes!
+      '';
+      customLuaRC = ''
+        -- here your custom Lua configuration goes!
+	-- disable netrw at the very start of your init.lua
+        vim.g.loaded_netrw = 1
+        vim.g.loaded_netrwPlugin = 1
+
+        -- optionally enable 24-bit colour
+        vim.opt.termguicolors = true
+	      require("nvim-tree").setup({
+          sort = {
+            sorter = "case_sensitive",
+          },
+          view = {
+            width = 30,
+          },
+          renderer = {
+            group_empty = true,
+          },
+          filters = {
+            dotfiles = true,
+          },
+        })
+        require('lualine').setup ({
+          options = {
+            icons_enabled = true,
+            theme = 'auto',
+            component_separators = { left = '', right = ''},
+            section_separators = { left = '', right = ''},
+            disabled_filetypes = {
+              statusline = {},
+              winbar = {},
+            },
+            ignore_focus = {},
+            always_divide_middle = true,
+            globalstatus = false,
+            refresh = {
+              statusline = 1000,
+              tabline = 1000,
+              winbar = 1000,
+            }
+          },
+          sections = {
+            lualine_a = {'mode'},
+            lualine_b = {'branch', 'diff', 'diagnostics'},
+            lualine_c = {'filename'},
+            lualine_x = {'encoding', 'fileformat', 'filetype'},
+            lualine_y = {'progress'},
+            lualine_z = {'location'}
+          },
+          inactive_sections = {
+            lualine_a = {},
+            lualine_b = {},
+            lualine_c = {'filename'},
+            lualine_x = {'location'},
+            lualine_y = {},
+            lualine_z = {}
+          },
+          tabline = {},
+          winbar = {},
+          inactive_winbar = {},
+          extensions = {}
+        })
+        require'nvim-treesitter.configs'.setup {
+          highlight = { enable = true },
+          incremental_selection = { enable = true },
+          textobjects = { enable = true },
+        }
+      '';
+      packages.myVimPackage = with pkgs.vimPlugins; {
+        # loaded on launch
+        start = [
+          nvim-tree-lua
+          lualine-nvim
+          nvim-web-devicons
+          nvim-treesitter.withAllGrammars
+        ];
+        # manually loadable by calling `:packadd $plugin-name`
+        opt = [ ];
+      };
+    };
   };
   
   virtualisation.docker = {
@@ -224,6 +309,7 @@
   '';
 
   fonts.packages = with pkgs; [
+    nerd-fonts.noto
     noto-fonts
     noto-fonts-cjk-sans
     noto-fonts-color-emoji
