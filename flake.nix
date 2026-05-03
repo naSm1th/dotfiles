@@ -5,13 +5,17 @@
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixos-25.11";
     };
+    nixpkgs-unstable = {
+      url = "github:nixos/nixpkgs/nixos-unstable";
+    };
     agenix = {
       url = "github:yaxitech/ragenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
   };
 
-  outputs = { nixpkgs, agenix, ... } @ inputs:
+  outputs = { nixpkgs, nixpkgs-unstable, agenix, ... } @ inputs:
   let
     shared = [
       ./modules/users/nsmith.nix
@@ -48,7 +52,7 @@
         ];
       };
 
-      fiona = nixpkgs.lib.nixosSystem {
+      fiona = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = shared ++ [
           ./hosts/fiona/configuration.nix

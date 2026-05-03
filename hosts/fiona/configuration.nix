@@ -51,7 +51,7 @@
     enable = true;
     package = pkgs.caddy.withPlugins {
       plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
-      hash = "sha256-i7OoxiHJ4Stfp7SnxOryLAXS6w5+PJCnEydOakhFYcE=";
+      hash = "sha256-Olz4W84Kiyldy+JtbIicVCL7dAYl4zq+2rxEOUTObxA=";
     };
     virtualHosts."ha.nasmith.me".extraConfig = ''
       tls {
@@ -60,8 +60,15 @@
       reverse_proxy localhost:8123 {
         header_down X-Real-IP {http.request.remote}
         header_down X-Forwarded-For {http.request.remote}
-        websocket
-        transparent
+      }
+    '';
+    virtualHosts."ollama.nasmith.me".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+      reverse_proxy localhost:3000 {
+        header_down X-Real-IP {http.request.remote}
+        header_down X-Forwarded-For {http.request.remote}
       }
     '';
   };
@@ -77,14 +84,36 @@
       model = "tiny-int8";
       uri = "tcp://localhost:10300";
       language = "en";
+      zeroconf.enable = false;
     };
     piper.servers.ha = {
       enable = true;
       voice = "en_GB-semaine-medium";
       speaker = 0;
       uri = "tcp://localhost:10200";
-      streaming = true;
+      zeroconf.enable = false;
     };
+  };
+
+  services.ollama = {
+    enable = true;
+    port = 11434;
+    host = "127.0.0.1";
+    openFirewall = true;
+    loadModels = [
+      "gemma4:e2b"
+      "ministral-3:3b"
+      "qwen3.5:0.8b"
+      "qwen3:0.6b"
+    ];
+    syncModels = true;
+  };
+
+  services.nextjs-ollama-llm-ui = {
+    enable = true;
+    hostname = "127.0.0.1";
+    ollamaUrl = "http://127.0.0.1:11434";
+    port = 3000;
   };
 
   virtualisation = {
