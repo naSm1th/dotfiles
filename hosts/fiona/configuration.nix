@@ -62,15 +62,15 @@
         header_down X-Forwarded-For {http.request.remote}
       }
     '';
-    virtualHosts."ollama.nasmith.me".extraConfig = ''
-      tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-      }
-      reverse_proxy localhost:3000 {
-        header_down X-Real-IP {http.request.remote}
-        header_down X-Forwarded-For {http.request.remote}
-      }
-    '';
+    # virtualHosts."ollama.nasmith.me".extraConfig = ''
+    #   tls {
+    #     dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    #   }
+    #   reverse_proxy localhost:3000 {
+    #     header_down X-Real-IP {http.request.remote}
+    #     header_down X-Forwarded-For {http.request.remote}
+    #   }
+    # '';
   };
   systemd.services.caddy.serviceConfig.EnvironmentFile = config.age.secrets.cloudflare.path;
 
@@ -95,26 +95,26 @@
     };
   };
 
-  services.ollama = {
-    enable = true;
-    port = 11434;
-    host = "127.0.0.1";
-    openFirewall = true;
-    loadModels = [
-      "gemma4:e2b"
-      "ministral-3:3b"
-      "qwen3.5:0.8b"
-      "qwen3:0.6b"
-    ];
-    syncModels = true;
-  };
+  # services.ollama = {
+  #   enable = true;
+  #   port = 11434;
+  #   host = "127.0.0.1";
+  #   openFirewall = true;
+  #   loadModels = [
+  #     "gemma4:e2b"
+  #     "ministral-3:3b"
+  #     "qwen3.5:0.8b"
+  #     "qwen3:0.6b"
+  #   ];
+  #   syncModels = true;
+  # };
 
-  services.nextjs-ollama-llm-ui = {
-    enable = true;
-    hostname = "127.0.0.1";
-    ollamaUrl = "http://127.0.0.1:11434";
-    port = 3000;
-  };
+  # services.nextjs-ollama-llm-ui = {
+  #   enable = true;
+  #   hostname = "127.0.0.1";
+  #   ollamaUrl = "http://127.0.0.1:11434";
+  #   port = 3000;
+  # };
 
   virtualisation = {
     containers.enable = true;
