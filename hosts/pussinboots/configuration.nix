@@ -60,6 +60,8 @@
     ragenix
   ];
 
+  environment.variables.EDITOR = "vim";
+
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 

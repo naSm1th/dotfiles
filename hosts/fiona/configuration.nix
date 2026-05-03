@@ -44,6 +44,8 @@
   #  wget
   ];
 
+  environment.variables.editor = "vim";
+
   # Caddy reverse proxy (with ACME DNS integration with Cloudflare)
   services.caddy = {
     enable = true;
