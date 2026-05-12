@@ -222,75 +222,74 @@
         header_down X-Forwarded-For {http.request.remote}
       }
     '';
-
+    virtualHosts."sabnzbd.media.nasmith.me".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+      reverse_proxy localhost:8080 {
+        header_down X-Real-IP {http.request.remote}
+        header_down X-Forwarded-For {http.request.remote}
+      }
+    '';
     virtualHosts."sonarr.media.nasmith.me".extraConfig = ''
       tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
       }
-      reverse_proxy localhost:6767 {
+      reverse_proxy localhost:8989 {
         header_down X-Real-IP {http.request.remote}
         header_down X-Forwarded-For {http.request.remote}
       }
     '';
-
     virtualHosts."tautulli.media.nasmith.me".extraConfig = ''
       tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
       }
-      reverse_proxy localhost:6767 {
+      reverse_proxy localhost:8181 {
         header_down X-Real-IP {http.request.remote}
         header_down X-Forwarded-For {http.request.remote}
       }
     '';
-
-
     virtualHosts."plex.media.nasmith.me".extraConfig = ''
       tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
       }
-      reverse_proxy localhost:6767 {
+      reverse_proxy localhost:32400 {
         header_down X-Real-IP {http.request.remote}
         header_down X-Forwarded-For {http.request.remote}
       }
     '';
-
     virtualHosts."radarr.media.nasmith.me".extraConfig = ''
       tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
       }
-      reverse_proxy localhost:6767 {
+      reverse_proxy localhost:7878 {
         header_down X-Real-IP {http.request.remote}
         header_down X-Forwarded-For {http.request.remote}
       }
     '';
-
-
     virtualHosts."prowlarr.media.nasmith.me".extraConfig = ''
       tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
       }
-      reverse_proxy localhost:6767 {
+      reverse_proxy localhost:9696 {
         header_down X-Real-IP {http.request.remote}
         header_down X-Forwarded-For {http.request.remote}
       }
     '';
-
-
     virtualHosts."overseerr.media.nasmith.me".extraConfig = ''
       tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
       }
-      reverse_proxy localhost:6767 {
+      reverse_proxy localhost:5055 {
         header_down X-Real-IP {http.request.remote}
         header_down X-Forwarded-For {http.request.remote}
       }
     '';
-
     virtualHosts."deluge.media.nasmith.me".extraConfig = ''
       tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
       }
-      reverse_proxy localhost:6767 {
+      reverse_proxy localhost:8112 {
         header_down X-Real-IP {http.request.remote}
         header_down X-Forwarded-For {http.request.remote}
       }
