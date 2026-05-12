@@ -88,6 +88,12 @@
     group = "media";
   };
 
+  services.sabnzbd = {
+    enable = true;
+    group = "media";
+    openFirewall = true;
+  };
+
   # creating network namespace
   systemd.services."netns@" = {
     description = "%I network namespace";
@@ -199,6 +205,100 @@
     openFirewall = true;
     group = "media";
   };
+
+  # Caddy reverse proxy (with ACME DNS integration with Cloudflare)
+  services.caddy = {
+    enable = true;
+    package = pkgs.caddy.withPlugins {
+      plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
+      hash = "sha256-i7OoxiHJ4Stfp7SnxOryLAXS6w5+PJCnEydOakhFYcE=";
+    };
+    virtualHosts."bazarr.media.nasmith.me".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+      reverse_proxy localhost:6767 {
+        header_down X-Real-IP {http.request.remote}
+        header_down X-Forwarded-For {http.request.remote}
+      }
+    '';
+
+    virtualHosts."sonarr.media.nasmith.me".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+      reverse_proxy localhost:6767 {
+        header_down X-Real-IP {http.request.remote}
+        header_down X-Forwarded-For {http.request.remote}
+      }
+    '';
+
+    virtualHosts."tautulli.media.nasmith.me".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+      reverse_proxy localhost:6767 {
+        header_down X-Real-IP {http.request.remote}
+        header_down X-Forwarded-For {http.request.remote}
+      }
+    '';
+
+
+    virtualHosts."plex.media.nasmith.me".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+      reverse_proxy localhost:6767 {
+        header_down X-Real-IP {http.request.remote}
+        header_down X-Forwarded-For {http.request.remote}
+      }
+    '';
+
+    virtualHosts."radarr.media.nasmith.me".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+      reverse_proxy localhost:6767 {
+        header_down X-Real-IP {http.request.remote}
+        header_down X-Forwarded-For {http.request.remote}
+      }
+    '';
+
+
+    virtualHosts."prowlarr.media.nasmith.me".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+      reverse_proxy localhost:6767 {
+        header_down X-Real-IP {http.request.remote}
+        header_down X-Forwarded-For {http.request.remote}
+      }
+    '';
+
+
+    virtualHosts."overseerr.media.nasmith.me".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+      reverse_proxy localhost:6767 {
+        header_down X-Real-IP {http.request.remote}
+        header_down X-Forwarded-For {http.request.remote}
+      }
+    '';
+
+    virtualHosts."deluge.media.nasmith.me".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+      reverse_proxy localhost:6767 {
+        header_down X-Real-IP {http.request.remote}
+        header_down X-Forwarded-For {http.request.remote}
+      }
+    '';
+  };
+  systemd.services.caddy.serviceConfig.EnvironmentFile = config.age.secrets.cloudflare.path;
+
+
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

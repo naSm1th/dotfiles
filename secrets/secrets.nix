@@ -10,7 +10,7 @@ let
   allUsers = builtins.attrValues users;
   allSystems = builtins.attrValues systems;
 in {
-  "cloudflare.age".publicKeys = allUsers ++ [systems.fiona];
+  "cloudflare.age".publicKeys = allUsers ++ [systems.fiona systems.pussinboots];
   "wireguardConfig.age".publicKeys = allUsers ++ [systems.pussinboots];
 }
 
