@@ -206,6 +206,20 @@
     group = "media";
   };
 
+  services.homepage-dashboard = {
+    enable = true;
+    allowedHosts = "media.nasmith.me,localhost:8082,127.0.0.1:8082";
+    settings = {
+      title = "pussinboots Media Server";
+    };
+    widgets = [
+    ];
+    services = [
+    ];
+    bookmarks = [
+    ];
+  };
+
   # Caddy reverse proxy (with ACME DNS integration with Cloudflare)
   services.caddy = {
     enable = true;
@@ -213,6 +227,15 @@
       plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
       hash = "sha256-i7OoxiHJ4Stfp7SnxOryLAXS6w5+PJCnEydOakhFYcE=";
     };
+    virtualHosts."media.nasmith.me".extraConfig = ''
+      tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+      }
+      reverse_proxy localhost:8082 {
+        header_down X-Real-IP {http.request.remote}
+        header_down X-Forwarded-For {http.request.remote}
+      }
+    '';
     virtualHosts."bazarr.media.nasmith.me".extraConfig = ''
       tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
