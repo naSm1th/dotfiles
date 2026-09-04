@@ -225,7 +225,7 @@
     enable = true;
     package = pkgs.caddy.withPlugins {
       plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
-      hash = "sha256-i7OoxiHJ4Stfp7SnxOryLAXS6w5+PJCnEydOakhFYcE=";
+      hash = "sha256-Q0lgI8MY90u/5R/xXBVPQWCZBN7dUZ0kcuDxD0xd0fo=";
     };
     virtualHosts."media.nasmith.me".extraConfig = ''
       tls {
