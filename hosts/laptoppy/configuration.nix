@@ -140,6 +140,8 @@
     iw
     protonup-ng
     reaper
+    spotify
+    inkscape
   ];
 
   environment.variables.EDITOR = "vim";
