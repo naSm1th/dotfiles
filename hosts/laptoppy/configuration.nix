@@ -52,6 +52,11 @@
     };
   };
 
+  # Ignore warnings about GTK2 removal
+  nixpkgs.config.problems.handlers = {
+    "gtk+".broken = "ignore"; # or "warn"
+  };
+
   nixpkgs.config.allowUnfree = true;
 
   # Enable the X11 windowing system.
@@ -135,16 +140,15 @@
     zed-editor
     smartmontools
     joplin
-    qgis
-    supercell-wx
     iw
     protonup-ng
     reaper
     spotify
     inkscape
+    prismlauncher
   ];
 
-  environment.variables.EDITOR = "vim";
+  environment.variables.EDITOR = "nvim";
 
   environment.sessionVariables = {
     STEAM_EXTRA_COMPAT_TOOLS_PATHS =
@@ -232,11 +236,6 @@
           inactive_winbar = {},
           extensions = {}
         })
-        require'nvim-treesitter.configs'.setup {
-          highlight = { enable = true },
-          incremental_selection = { enable = true },
-          textobjects = { enable = true },
-        }
       '';
       packages.myVimPackage = with pkgs.vimPlugins; {
         # loaded on launch

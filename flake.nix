@@ -80,7 +80,7 @@
         ];
       };
 
-      laptoppy = nixpkgs.lib.nixosSystem {
+      laptoppy = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = shared ++ [
           ./hosts/laptoppy/configuration.nix
