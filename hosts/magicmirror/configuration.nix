@@ -35,6 +35,8 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  services.fwupd.enable = true;
+
   environment.systemPackages = with pkgs; [
     vim
   #  wget

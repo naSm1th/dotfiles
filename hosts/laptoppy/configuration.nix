@@ -59,6 +59,8 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  services.fwupd.enable = true;
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 

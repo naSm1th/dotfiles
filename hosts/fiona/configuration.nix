@@ -46,6 +46,8 @@
 
   environment.variables.editor = "vim";
 
+  services.fwupd.enable = true;
+
   # Caddy reverse proxy (with ACME DNS integration with Cloudflare)
   services.caddy = {
     enable = true;

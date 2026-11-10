@@ -62,6 +62,8 @@
 
   environment.variables.EDITOR = "vim";
 
+  services.fwupd.enable = true;
+
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
