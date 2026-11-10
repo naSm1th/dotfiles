@@ -88,12 +88,6 @@
     group = "media";
   };
 
-  services.sabnzbd = {
-    enable = true;
-    group = "media";
-    openFirewall = true;
-  };
-
   # creating network namespace
   systemd.services."netns@" = {
     description = "%I network namespace";
@@ -173,7 +167,7 @@
     group = "media";
   };
 
-  services.overseerr = {
+  services.seerr = {
     enable = true;
     openFirewall = true;
   };
@@ -225,7 +219,7 @@
     enable = true;
     package = pkgs.caddy.withPlugins {
       plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
-      hash = "sha256-Q0lgI8MY90u/5R/xXBVPQWCZBN7dUZ0kcuDxD0xd0fo=";
+      hash = "sha256-QSiwKqKvSxhksWBF4/MlBOpyXba5xOQ2sRwA0R7399E=";
     };
     virtualHosts."media.nasmith.me".extraConfig = ''
       tls {
@@ -245,16 +239,7 @@
         header_down X-Forwarded-For {http.request.remote}
       }
     '';
-    virtualHosts."sabnzbd.media.nasmith.me".extraConfig = ''
-      tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-      }
-      reverse_proxy localhost:8080 {
-        header_down X-Real-IP {http.request.remote}
-        header_down X-Forwarded-For {http.request.remote}
-      }
-    '';
-    virtualHosts."sonarr.media.nasmith.me".extraConfig = ''
+   virtualHosts."sonarr.media.nasmith.me".extraConfig = ''
       tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
       }

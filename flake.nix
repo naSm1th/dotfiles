@@ -38,14 +38,14 @@
   in
   {
     nixosConfigurations = {
-      donkey = nixpkgs.lib.nixosSystem {
+      donkey = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = shared ++ [
           ./hosts/donkey/configuration.nix
         ];
       };
 
-      farquaad = nixpkgs.lib.nixosSystem {
+      farquaad = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = shared ++ [
           ./hosts/farquaad/configuration.nix
@@ -59,21 +59,21 @@
         ];
       };
 
-      magicmirror = nixpkgs.lib.nixosSystem {
+      magicmirror = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = shared ++ [
           ./hosts/magicmirror/configuration.nix
         ];
       };
 
-      pussinboots = nixpkgs.lib.nixosSystem {
+      pussinboots = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = shared ++ [
           ./hosts/pussinboots/configuration.nix
         ];
       };
 
-      shrek = nixpkgs.lib.nixosSystem {
+      shrek = nixpkgs-unstable.lib.nixosSystem {
         system = "x86_64-linux";
         modules = shared ++ [
           ./hosts/shrek/configuration.nix
